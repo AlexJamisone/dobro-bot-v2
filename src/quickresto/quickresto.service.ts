@@ -32,7 +32,7 @@ export class QuickrestoService {
 			} else {
 				const readUser = await this.qr.get('api/read', {
 					params: {
-						moduleName: 'crm.customers',
+						moduleName: 'crm.customer',
 						objectId: user.data.customers[0].id,
 					},
 				});
