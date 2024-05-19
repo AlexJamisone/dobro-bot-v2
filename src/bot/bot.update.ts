@@ -7,10 +7,10 @@ export class BotUpdate {
 	constructor(private readonly botService: BotService) {}
 	@Start()
 	async start(ctx: Context) {
-		await this.botService.start(ctx)
+		await this.botService.start(ctx);
 	}
-    @On("text")
-    async waitForPhone(@Ctx() ctx: Context, @Message("text") message: string) {
-        await this.botService.listenPhone(ctx, message)
-    }
+	@On('text')
+	async waitForPhone(@Ctx() ctx: Context, @Message('text') message: string) {
+		await this.botService.listenPhone(ctx, message);
+	}
 }
