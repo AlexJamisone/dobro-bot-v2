@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import type { Processed, ResponseQType } from './quickresto.types.ts';
 import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
+import axiosRetry from 'axios-retry';
 type User = {
 	name?: string;
 	bonuses?: number;
@@ -10,10 +11,20 @@ type User = {
 };
 
 @Injectable()
-export class QuickrestoService {
-	constructor(private readonly prisma: PrismaService) {
+export class QuickrestoService implements OnModuleInit {
+	onModuleInit() {
 		this.init();
+		axiosRetry(this.qr, {
+			retries: 4,
+			retryDelay: (count) => count * 1000,
+			onRetry: (count, error) =>
+				this.logger.error(
+					`Error on retry ${count}, error: ${error.message}`,
+				),
+			retryCondition: () => true,
+		});
 	}
+	constructor(private readonly prisma: PrismaService) {}
 	private readonly logger = new Logger(QuickrestoService.name);
 	private init() {
 		this.rowQr.interceptors.request.use(
@@ -121,9 +132,9 @@ export class QuickrestoService {
 			});
 			const result = await Promise.all(promises);
 			if (result.some((value) => value === false)) {
-				this.logger.warn('Some value not update');
+				this.logger.warn('Some value not update ⚠️');
 			} else {
-				this.logger.verbose('All minimalPrice update');
+				this.logger.verbose('All minimalPrice update ✅');
 			}
 		} catch (err) {
 			console.log(err);

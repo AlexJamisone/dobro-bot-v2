@@ -41,8 +41,7 @@ export class PrismaService
 	}: {
 		coffees: (CoffeeInfo & Processed)[];
 	}): Promise<boolean> {
-		const promises = coffees.map((coffee, idx) => {
-			this.logger.verbose(`Upsert on ${idx} index`);
+		const promises = coffees.map((coffee) => {
 			return this.coffee.upsert({
 				where: {
 					img: coffee.img,

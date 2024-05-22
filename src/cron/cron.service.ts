@@ -16,17 +16,22 @@ export class CronService {
 	) {}
 	private readonly logger = new Logger(CronService.name);
 
-	@Cron('45 * * * * *')
+	@Cron('0 */2 * * *')
 	async handlCron() {
 		this.logger.verbose('Start Cron task');
 		const coffees = await this.merge();
 		await this.prisma.upsertCoffeesInDb({ coffees });
+		this.logger.verbose('Finish upsert coffee in db ✅');
 		await this.quickresto.updateMinimalPrice();
 		this.logger.verbose('End cron Task');
 	}
 	private async merge() {
+		this.logger.verbose('Pull from wrap api...');
 		const wrap = this.wrapapi.getCoffeeInfo();
+		this.logger.verbose('Done ✅');
+		this.logger.verbose('Pull ids from quickresto...');
 		const qr = this.quickresto.extractIdFromQR();
+		this.logger.verbose('Done ✅');
 		const result: (Processed & CoffeeInfo)[] = [];
 		const [w, q] = await Promise.all([wrap, qr]);
 		for (const coffee of w) {

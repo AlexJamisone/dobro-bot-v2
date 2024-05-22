@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import axios from 'axios';
 import type { CoffeeInfo, RawCoffeeInfo } from './wrapapi.type';
+import axiosRetry from 'axios-retry';
 
 @Injectable()
-export class WrapapiService {
+export class WrapapiService implements OnModuleInit {
 	private readonly logger = new Logger(WrapapiService.name);
 	private base = axios.create({
 		baseURL: process.env.WRAP_API_LINK,
@@ -12,6 +13,15 @@ export class WrapapiService {
 			wrapAPIKey: process.env.WRAP_API_KEY,
 		},
 	});
+	onModuleInit() {
+		axiosRetry(this.base, {
+			retries: 3,
+			retryDelay: (count) => count * 1000,
+			onRetry: (count) => {
+				this.logger.error(`Error on warap api, on retry ${count}`);
+			},
+		});
+	}
 
 	async getCoffeeInfo(): Promise<CoffeeInfo[]> {
 		try {
