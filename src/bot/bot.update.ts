@@ -4,7 +4,9 @@ import { Context } from 'telegraf';
 
 @Update()
 export class BotUpdate {
-	constructor(private readonly botService: BotService) {}
+	constructor(
+		private readonly botService: BotService,
+	) {}
 
 	@Start()
 	async start(ctx: Context) {

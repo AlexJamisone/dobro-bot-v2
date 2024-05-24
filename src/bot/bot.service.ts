@@ -1,18 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import response from 'src/constant/response';
+import { LoggerService } from 'src/logger/logger.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Context } from 'telegraf';
 
 @Injectable()
 export class BotService {
-	constructor(private readonly qrService: QuickrestoService) {}
-	private readonly logger = new Logger(BotService.name);
+	constructor(
+		private readonly qrService: QuickrestoService,
+		private readonly logger: LoggerService,
+	) {}
 	async start(ctx: Context) {
 		return await ctx.reply(response.welcome());
 	}
 	async test() {
-		const loger = this.logger;
-		console.log(JSON.stringify(loger));
+		this.logger.getLogs(); // работает
 	}
 	async listenPhone(ctx: Context, message: string) {
 		if (message.length === 12) {
