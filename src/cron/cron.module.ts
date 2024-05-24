@@ -13,5 +13,6 @@ import { QuickrestoModule } from 'src/quickresto/quickresto.module';
 		QuickrestoModule,
 	],
 	providers: [CronService],
+	exports: [CronService],
 })
 export class CronModule {}

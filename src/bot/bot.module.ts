@@ -4,6 +4,7 @@ import { TelegrafModule } from 'nestjs-telegraf';
 import * as LocalSession from 'telegraf-session-local';
 import { ConfigModule } from '@nestjs/config';
 import { QuickrestoModule } from 'src/quickresto/quickresto.module';
+import { BotUpdate } from './bot.update';
 
 const session = new LocalSession({
 	database: 'session_db.json',
@@ -17,6 +18,6 @@ const session = new LocalSession({
 		}),
 		QuickrestoModule,
 	],
-	providers: [BotService],
+	providers: [BotService, BotUpdate],
 })
 export class BotModule {}

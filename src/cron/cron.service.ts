@@ -25,6 +25,10 @@ export class CronService {
 		await this.quickresto.updateMinimalPrice();
 		this.logger.verbose('End cron Task');
 	}
+	async getLogs() {
+		const logs = this.logger;
+		console.log(JSON.stringify(logs));
+	}
 	private async merge() {
 		this.logger.verbose('Pull from wrap api...');
 		const wrap = this.wrapapi.getCoffeeInfo();
