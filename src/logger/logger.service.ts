@@ -50,13 +50,15 @@ export class LoggerService implements Logger {
 	}
 
 	log(message: string, ctx?: string) {
-		const logMessage = `[${this.getDate()}] - LOG: [${ctx}] ${message} ${this.measurePerformance()}`;
+		const context = ctx ? `[${ctx}]` : '';
+		const logMessage = `[${this.getDate()}] - LOG: ${context} ${message} ${this.measurePerformance()}`;
 		this.logs.push(logMessage);
 		console.log(this.colors.green.bold(logMessage));
 	}
 
-	error(message: string, trace: string) {
-		const logMessage = `ERROR: ${message} - TRACE: ${trace}`;
+	error(message: string, t: string) {
+		const trace = t ? `- TRACE: ${t}` : '';
+		const logMessage = `[${this.getDate()}] - ERROR: ${message} ${trace}  ${this.measurePerformance()}`;
 		this.logs.push(logMessage);
 		console.error(this.colors.red(logMessage));
 	}
@@ -73,14 +75,19 @@ export class LoggerService implements Logger {
 		console.debug(this.colors.blue(logMessage));
 	}
 
-	verbose(message: string) {
-		const logMessage = `VERBOSE: ${message}`;
+	verbose(message: string, ctx?: string) {
+		const context = ctx ? `[${ctx}]` : '';
+		const logMessage = `[${this.getDate()}] - INFO: ${context} ${message} ${this.measurePerformance()}`;
 		this.logs.push(logMessage);
 		console.log(this.colors.cyan(logMessage));
 	}
+	clear(): void {
+		this.logs = [];
+	}
 
 	getLogs(): string {
-		console.log(this.logs); // тут при вызове пусто
-		return this.logs.join('\n');
+		const lastLogs = this.logs.slice(-20);
+		this.logs = lastLogs;
+		return lastLogs.join('\n').replace(/\[\d+m/g, '');
 	}
 }

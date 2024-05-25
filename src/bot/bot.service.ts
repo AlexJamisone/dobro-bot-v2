@@ -13,8 +13,10 @@ export class BotService {
 	async start(ctx: Context) {
 		return await ctx.reply(response.welcome());
 	}
-	async test() {
-		this.logger.getLogs(); // работает
+	async sendLogs(ctx: Context) {
+		const logs = this.logger.getLogs();
+		const formattedLogs = `\`\`\`${logs}\`\`\``;
+		await ctx.reply(formattedLogs, { parse_mode: 'MarkdownV2' });
 	}
 	async listenPhone(ctx: Context, message: string) {
 		if (message.length === 12) {

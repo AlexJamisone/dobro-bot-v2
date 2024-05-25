@@ -33,5 +33,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# session
+
+session_db.json
+
 # Env
 .env

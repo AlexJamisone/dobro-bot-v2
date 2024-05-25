@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import type { Processed, ResponseQType } from './quickresto.types.ts';
 import axios from 'axios';
 import { PrismaService } from '../prisma/prisma.service';
-import axiosRetry from 'axios-retry';
+import axiosRetry, { IAxiosRetryConfig } from 'axios-retry';
 type User = {
 	name?: string;
 	bonuses?: number;
@@ -14,18 +14,21 @@ type User = {
 export class QuickrestoService implements OnModuleInit {
 	onModuleInit() {
 		this.init();
-		axiosRetry(this.qr, {
-			retries: 4,
-			retryDelay: (count) => count * 1000,
-			onRetry: (count, error) =>
-				this.logger.error(
-					`Error on retry ${count}, error: ${error.message}`,
-				),
-			retryCondition: () => true,
-		});
+		axiosRetry(this.qr, this.axiosRetryConfig);
+		axiosRetry(this.rowQr, this.axiosRetryConfig);
 	}
 	constructor(private readonly prisma: PrismaService) {}
+
 	private readonly logger = new Logger(QuickrestoService.name);
+	private axiosRetryConfig: IAxiosRetryConfig = {
+		retries: 4,
+		retryDelay: (count) => count * 1000,
+		onRetry: (count, error) =>
+			this.logger.error(
+				`Error on retry ${count}, error: ${error.message}`,
+			),
+		retryCondition: () => true,
+	};
 	private init() {
 		this.rowQr.interceptors.request.use(
 			async (config) => {

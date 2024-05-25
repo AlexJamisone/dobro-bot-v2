@@ -4,17 +4,19 @@ import { Context } from 'telegraf';
 
 @Update()
 export class BotUpdate {
-	constructor(
-		private readonly botService: BotService,
-	) {}
+	constructor(private readonly botService: BotService) {}
 
 	@Start()
 	async start(ctx: Context) {
 		await this.botService.start(ctx);
 	}
-	@Hears('/test')
-	async test() {
-		await this.botService.test();
+	@Hears('/logs')
+	async logs(ctx: Context) {
+		if (+process.env.HOST === ctx.from.id) {
+			await this.botService.sendLogs(ctx);
+		} else {
+			await ctx.reply('У вас нет доступа к этой команде');
+		}
 	}
 
 	@On('text')

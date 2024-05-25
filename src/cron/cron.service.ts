@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { compareStrings } from 'src/constant/helper';
+import { LoggerService } from 'src/logger/logger.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Processed } from 'src/quickresto/quickresto.types';
@@ -13,11 +14,10 @@ export class CronService {
 		private readonly wrapapi: WrapapiService,
 		private readonly quickresto: QuickrestoService,
 		private readonly prisma: PrismaService,
+		private readonly logger: LoggerService,
 	) {}
-	private readonly logger = new Logger(CronService.name);
-
 	@Cron('0 */2 * * *')
-	async handlCron() {
+	async handlUpdatePrice() {
 		this.logger.verbose('Start Cron task');
 		const coffees = await this.merge();
 		await this.prisma.upsertCoffeesInDb({ coffees });
@@ -25,9 +25,9 @@ export class CronService {
 		await this.quickresto.updateMinimalPrice();
 		this.logger.verbose('End cron Task');
 	}
-	async getLogs() {
-		const logs = this.logger;
-		console.log(JSON.stringify(logs));
+	@Cron('0 0 * * *')
+	handlClearLogs() {
+		this.logger.clear();
 	}
 	private async merge() {
 		this.logger.verbose('Pull from wrap api...');
