@@ -37,6 +37,7 @@ lerna-debug.log*
 # session
 
 session_db.json
+metric.json
 
 # Env
 .env

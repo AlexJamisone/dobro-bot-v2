@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import response from 'src/constant/response';
 import { LoggerService } from 'src/logger/logger.service';
+import { MetricService } from 'src/metric/metric.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Context } from 'telegraf';
 
@@ -9,6 +10,7 @@ export class BotService {
 	constructor(
 		private readonly qrService: QuickrestoService,
 		private readonly logger: LoggerService,
+		private readonly metric: MetricService,
 	) {}
 	async start(ctx: Context) {
 		return await ctx.reply(response.welcome());
@@ -18,10 +20,15 @@ export class BotService {
 		const formattedLogs = `\`\`\`${logs}\`\`\``;
 		await ctx.reply(formattedLogs, { parse_mode: 'MarkdownV2' });
 	}
+	async sendMetric(ctx: Context) {
+		const count = this.metric.extract();
+		await ctx.reply(`На данный момент использовало ${count} раз`);
+	}
 	async listenPhone(ctx: Context, message: string) {
 		if (message.length === 12) {
 			const { name, bonuses, error, noCustomer } =
 				await this.qrService.getUser(message);
+			this.metric.inc();
 			if (noCustomer) {
 				await ctx.reply(response.notFound(message));
 				return;

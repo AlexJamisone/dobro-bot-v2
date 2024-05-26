@@ -8,12 +8,21 @@ export class BotUpdate {
 
 	@Start()
 	async start(ctx: Context) {
+		console.log(ctx.from);
 		await this.botService.start(ctx);
 	}
 	@Hears('/logs')
 	async logs(ctx: Context) {
 		if (+process.env.HOST === ctx.from.id) {
 			await this.botService.sendLogs(ctx);
+		} else {
+			await ctx.reply('У вас нет доступа к этой команде');
+		}
+	}
+	@Hears('/metr')
+	async metr(ctx: Context) {
+		if (+process.env.HOST === ctx.from.id) {
+			await this.botService.sendMetric(ctx);
 		} else {
 			await ctx.reply('У вас нет доступа к этой команде');
 		}

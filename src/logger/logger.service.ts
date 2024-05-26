@@ -3,10 +3,6 @@ import { create } from 'ansi-colors';
 
 @Injectable()
 export class LoggerService implements Logger {
-	constructor() {
-		console.log('init logger');
-	}
-
 	private logs: string[] = [];
 	private colors = create();
 

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { InjectBot } from 'nestjs-telegraf';
 import { compareStrings } from 'src/constant/helper';
 import { LoggerService } from 'src/logger/logger.service';
+import { MetricService } from 'src/metric/metric.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Processed } from 'src/quickresto/quickresto.types';
 import { WrapapiService } from 'src/wrapapi/wrapapi.service';
 import { CoffeeInfo } from 'src/wrapapi/wrapapi.type';
+import { Context, Telegraf } from 'telegraf';
 
 @Injectable()
 export class CronService {
@@ -15,6 +18,8 @@ export class CronService {
 		private readonly quickresto: QuickrestoService,
 		private readonly prisma: PrismaService,
 		private readonly logger: LoggerService,
+		private readonly metric: MetricService,
+		@InjectBot() private bot: Telegraf<Context>,
 	) {}
 	@Cron('0 */2 * * *')
 	async handlUpdatePrice() {
@@ -28,6 +33,19 @@ export class CronService {
 	@Cron('0 0 * * *')
 	handlClearLogs() {
 		this.logger.clear();
+	}
+	@Cron('0 9 1 * *')
+	async handlMetric() {
+		const count: number = this.metric.extract();
+		await this.bot.telegram.sendMessage(
+			process.env.HOST,
+			`За месяц сервис использовали ${count} раз. •ᴗ•`,
+		);
+		await this.bot.telegram.sendMessage(
+			process.env.HOST1,
+			`За месяц сервис использовали ${count} раз. •ᴗ•`,
+		);
+		this.metric.clear();
 	}
 	private async merge() {
 		this.logger.verbose('Pull from wrap api...');
