@@ -44,7 +44,7 @@ export class PrismaService
 		const promises = coffees.map((coffee) => {
 			return this.coffee.upsert({
 				where: {
-					img: coffee.img,
+					name: coffee.name,
 				},
 				update: {
 					price: coffee.price,

@@ -30,8 +30,8 @@ enum Role {
 
 model Coffee {
     id          String   @id @default(cuid())
-        img         String   @unique
-        name        String
+        img         String 
+        name        String @unique
         price       Int
         qid         Int?
         description String[]

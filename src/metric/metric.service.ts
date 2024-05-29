@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { existsSync, writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
+import { Metric } from './metric.types';
 
 @Injectable()
 export class MetricService {
