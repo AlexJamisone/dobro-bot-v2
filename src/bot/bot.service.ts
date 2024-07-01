@@ -3,7 +3,7 @@ import response from 'src/constant/response';
 import { LoggerService } from 'src/logger/logger.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
-import { Context } from 'telegraf';
+import { Context, Markup } from 'telegraf';
 
 @Injectable()
 export class BotService {
@@ -13,7 +13,16 @@ export class BotService {
 		private readonly db: PrismaService,
 	) {}
 	async start(ctx: Context) {
-		return await ctx.reply(response.welcome());
+		const markup = Markup.inlineKeyboard(
+			[
+				{ url: 'https://dobro-coffee.shop/tips', text: 'Чаевые' },
+				{ url: 'https://dobro-coffee.shop/yandex', text: 'Отзывы' },
+			],
+			{
+				columns: 2,
+			},
+		);
+		return await ctx.reply(response.welcome(), markup);
 	}
 	async sendLogs(ctx: Context) {
 		const logs = this.logger.getLogs();
