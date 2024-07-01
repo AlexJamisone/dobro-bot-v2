@@ -74,4 +74,58 @@ export class PrismaService
 		}
 		return true;
 	}
+	async inc() {
+		try {
+			const metric = await this.metric.findFirst();
+			if (!metric) {
+				const m = await this.metric.create({
+					data: {
+						count: 0,
+					},
+				});
+				await this.metric.update({
+					where: { id: m.id },
+					data: {
+						count: {
+							increment: 1,
+						},
+					},
+				});
+				return;
+			}
+			await this.metric.update({
+				where: {
+					id: metric.id,
+				},
+				data: {
+					count: {
+						increment: 1,
+					},
+				},
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	async getMetric(): Promise<number> {
+		try {
+			return await this.metric.findFirst().then((res) => res.count);
+		} catch (err) {
+			console.log(err);
+		}
+	}
+	async clearMetric(): Promise<void> {
+		try {
+			const id = await this.metric.findFirst().then((res) => res.id);
+			await this.metric.update({
+				where: { id },
+				data: {
+					count: 0,
+				},
+			});
+		} catch (err) {
+			console.log(err);
+			throw new Error('Error clear metric');
+		}
+	}
 }

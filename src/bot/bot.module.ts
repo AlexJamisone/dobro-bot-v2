@@ -5,7 +5,7 @@ import * as LocalSession from 'telegraf-session-local';
 import { ConfigModule } from '@nestjs/config';
 import { QuickrestoModule } from 'src/quickresto/quickresto.module';
 import { BotUpdate } from './bot.update';
-import { MetricModule } from 'src/metric/metric.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 const session = new LocalSession({
 	database: 'session_db.json',
@@ -18,7 +18,7 @@ const session = new LocalSession({
 			token: process.env.TOKEN,
 		}),
 		QuickrestoModule,
-		MetricModule,
+		PrismaModule,
 	],
 	providers: [BotService, BotUpdate],
 })

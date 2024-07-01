@@ -3,7 +3,6 @@ import { Cron } from '@nestjs/schedule';
 import { InjectBot } from 'nestjs-telegraf';
 import { compareStrings } from 'src/constant/helper';
 import { LoggerService } from 'src/logger/logger.service';
-import { MetricService } from 'src/metric/metric.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Processed } from 'src/quickresto/quickresto.types';
@@ -18,7 +17,6 @@ export class CronService {
 		private readonly quickresto: QuickrestoService,
 		private readonly prisma: PrismaService,
 		private readonly logger: LoggerService,
-		private readonly metric: MetricService,
 		@InjectBot() private bot: Telegraf<Context>,
 	) {}
 	@Cron('0 */2 * * *')
@@ -36,7 +34,7 @@ export class CronService {
 	}
 	@Cron('0 9 1 * *')
 	async handlMetric() {
-		const count: number = this.metric.extract();
+		const count: number = await this.prisma.getMetric();
 		await this.bot.telegram.sendMessage(
 			process.env.HOST,
 			`За месяц сервис использовали ${count} раз. •ᴗ•`,
@@ -45,7 +43,7 @@ export class CronService {
 			process.env.HOST1,
 			`За месяц сервис использовали ${count} раз. •ᴗ•`,
 		);
-		this.metric.clear();
+		await this.prisma.clearMetric();
 	}
 	private async merge() {
 		this.logger.verbose('Pull from wrap api...');

@@ -51,3 +51,8 @@ model Fild {
         coffee   Coffee? @relation(fields: [coffeeId], references: [id], onDelete: Cascade)
         coffeeId String?
 }
+
+model Metric {
+    id Int @id @default(autoincrement())
+    count Int
+}
