@@ -19,15 +19,15 @@ export class CronService {
 		private readonly logger: LoggerService,
 		@InjectBot() private bot: Telegraf<Context>,
 	) {}
-	@Cron('0 */2 * * *')
-	async handlUpdatePrice() {
-		this.logger.verbose('Start Cron task');
-		const coffees = await this.merge();
-		await this.prisma.upsertCoffeesInDb({ coffees });
-		this.logger.verbose('Finish upsert coffee in db ✅');
-		await this.quickresto.updateMinimalPrice();
-		this.logger.verbose('End cron Task');
-	}
+	// @Cron('0 */2 * * *')
+	// async handlUpdatePrice() {
+	// 	this.logger.verbose('Start Cron task');
+	// 	const coffees = await this.merge();
+	// 	await this.prisma.upsertCoffeesInDb({ coffees });
+	// 	this.logger.verbose('Finish upsert coffee in db ✅');
+	// 	await this.quickresto.updateMinimalPrice();
+	// 	this.logger.verbose('End cron Task');
+	// }
 	@Cron('0 0 * * *')
 	handlClearLogs() {
 		this.logger.clear();
