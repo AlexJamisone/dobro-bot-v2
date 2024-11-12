@@ -26,6 +26,7 @@ export class WrapapiService implements OnModuleInit {
 	async getCoffeeInfo(): Promise<CoffeeInfo[]> {
 		try {
 			const names = await this.getName();
+			console.log(names);
 			const promises = names.map((name) => this.getSinglCoffeeInfo(name));
 			const result = await Promise.all(promises);
 			return result;

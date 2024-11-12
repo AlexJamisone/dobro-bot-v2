@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectBot } from 'nestjs-telegraf';
 import { compareStrings } from 'src/constant/helper';
 import { LoggerService } from 'src/logger/logger.service';
@@ -20,14 +20,16 @@ export class CronService {
 		@InjectBot() private bot: Telegraf<Context>,
 	) {}
 	// @Cron('0 */2 * * *')
-	// async handlUpdatePrice() {
-	// 	this.logger.verbose('Start Cron task');
-	// 	const coffees = await this.merge();
-	// 	await this.prisma.upsertCoffeesInDb({ coffees });
-	// 	this.logger.verbose('Finish upsert coffee in db ✅');
-	// 	await this.quickresto.updateMinimalPrice();
-	// 	this.logger.verbose('End cron Task');
-	// }
+	@Cron(CronExpression.EVERY_MINUTE)
+	async handlUpdatePrice() {
+		this.logger.verbose('Start Cron task');
+		// const coffees = await this.merge();
+		// await this.prisma.upsertCoffeesInDb({ coffees });
+		// this.logger.verbose('Finish upsert coffee in db ✅');
+		// parser not work
+		await this.quickresto.updateMinimalPrice();
+		this.logger.verbose('End cron Task');
+	}
 	@Cron('0 0 * * *')
 	handlClearLogs() {
 		this.logger.clear();
