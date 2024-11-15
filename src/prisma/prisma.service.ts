@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { Processed } from 'src/quickresto/quickresto.types';
-import { CoffeeInfo } from 'src/wrapapi/wrapapi.type';
 
 @Injectable()
 export class PrismaService
@@ -39,7 +38,7 @@ export class PrismaService
 	async upsertCoffeesInDb({
 		coffees,
 	}: {
-		coffees: (CoffeeInfo & Processed)[];
+		coffees: (Coffee & Processed)[];
 	}): Promise<boolean> {
 		const promises = coffees.map((coffee) => {
 			return this.coffee.upsert({
@@ -51,20 +50,15 @@ export class PrismaService
 				},
 				create: {
 					price: coffee.price,
-					img: coffee.img,
+					image: coffee.image,
 					name: coffee.name,
-					type: coffee.type,
-					info: {
-						createMany: {
-							data: coffee.info.map((i) => ({
-								key: i.key,
-								value: i.value,
-							})),
-						},
-					},
 					description: coffee.description,
 					Iid: coffee.Iid,
 					qid: coffee.qid,
+					short: coffee.short,
+					fields: coffee.fields,
+					acidity: coffee.acidity,
+					density: coffee.density,
 				},
 			});
 		});
@@ -107,9 +101,15 @@ export class PrismaService
 			console.log(err);
 		}
 	}
-	async getMetric(): Promise<number> {
+	async getMetric(): Promise<{ count: number; nextUrl: string }> {
 		try {
-			return await this.metric.findFirst().then((res) => res.count);
+			const { nextUrl, count } = await this.metric.findFirst({
+				select: { count: true, nextUrl: true },
+			});
+			return {
+				count,
+				nextUrl,
+			};
 		} catch (err) {
 			console.log(err);
 		}

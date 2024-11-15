@@ -1,58 +1,30 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-        url      = env("DATABASE_URL")
-}
-model User {
-    id   String @id
-        role Role   @default(USER)
-}
-
-enum Acidity {
-    Bitter
-        Neutral
-        Acid
-}
-
-enum Density {
-    Tea
-        Neutral
-        Dense
-}
-
-enum Role {
-    ADMIN
-        USER
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Coffee {
-    id          String   @id @default(cuid())
-        img         String 
-        name        String @unique
-        price       Int
-        qid         Int?
-        description String[]
-        info        Fild[]
-        Iid         Int?
-        type        Float
-        density     Density? @default(Tea)
-        acidity     Acidity? @default(Bitter)
-        createdAt   DateTime @default(now())
-        updateAt    DateTime @updatedAt
-}
-
-model Fild {
-    id       String  @id @default(cuid())
-        key      String
-        value    String
-        coffee   Coffee? @relation(fields: [coffeeId], references: [id], onDelete: Cascade)
-        coffeeId String?
+  id          String   @id @default(cuid())
+  image       String
+  name        String   @unique
+  short       String
+  description String
+  price       Int
+  acidity     Int
+  density     Int
+  fields      Json
+  qid         Int?
+  Iid         Int?
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
 }
 
 model Metric {
-    id Int @id @default(autoincrement())
-    count Int
+  id    Int @id @default(autoincrement())
+  count Int
+  nextUrl String?
 }
