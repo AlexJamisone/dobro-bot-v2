@@ -6,7 +6,7 @@ import { ApiService } from './api.service';
 export class ApiController {
 	constructor(private readonly servise: ApiService) {}
 
-	@Get()
+	@Get('/coffees')
 	@UseGuards(BasicAuthGuard)
 	async getCoffee() {
 		return await this.servise.getCoffee();

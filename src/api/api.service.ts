@@ -7,7 +7,19 @@ export class ApiService {
 
 	async getCoffee() {
 		try {
-			return await this.db.coffee.findMany();
+			return await this.db.coffee.findMany({
+				select: {
+					id: true,
+					name: true,
+					image: true,
+					price: true,
+					short: true,
+					fields: true,
+					acidity: true,
+					density: true,
+					description: true,
+				},
+			});
 		} catch (err) {
 			throw err;
 		}
