@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 	imports: [PrismaModule],
 	providers: [ApiService],
 	controllers: [ApiController],
+	exports: [ApiService],
 })
 export class ApiModule {}

@@ -14,8 +14,8 @@ model Coffee {
   short       String
   description String
   price       Int
-  acidity     Int
-  density     Int
+  acidity     Int      @default(0)
+  density     Int      @default(0)
   fields      Json
   qid         Int?
   Iid         Int?
@@ -24,7 +24,6 @@ model Coffee {
 }
 
 model Metric {
-  id    Int @id @default(autoincrement())
-  count Int
-  nextUrl String?
+  id      Int     @id @default(autoincrement())
+  count   Int
 }

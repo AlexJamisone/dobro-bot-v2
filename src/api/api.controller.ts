@@ -11,4 +11,9 @@ export class ApiController {
 	async getCoffee() {
 		return await this.servise.getCoffee();
 	}
+
+    @Get("/urls")
+    async getUrls() {
+        return await this.servise.getCoffeeLink()
+    }
 }

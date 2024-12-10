@@ -30,14 +30,8 @@ export class BotService {
 		await ctx.reply(formattedLogs, { parse_mode: 'MarkdownV2' });
 	}
 	async sendMetric(ctx: Context) {
-		const { nextUrl, count } = await this.db.getMetric();
-		ctx.reply(`В данный момент использовали ${count} раз`, {
-			reply_markup: {
-				inline_keyboard: [
-					[{ url: nextUrl, text: 'Актуальная корзина' }],
-				],
-			},
-		});
+		const { count } = await this.db.getMetric();
+		ctx.reply(`В данный момент использовали ${count} раз`);
 	}
 	async listenPhone(ctx: Context, message: string) {
 		if (message.length === 12) {

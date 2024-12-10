@@ -101,14 +101,13 @@ export class PrismaService
 			console.log(err);
 		}
 	}
-	async getMetric(): Promise<{ count: number; nextUrl: string }> {
+	async getMetric(): Promise<{ count: number }> {
 		try {
-			const { nextUrl, count } = await this.metric.findFirst({
-				select: { count: true, nextUrl: true },
+			const { count } = await this.metric.findFirst({
+				select: { count: true },
 			});
 			return {
 				count,
-				nextUrl,
 			};
 		} catch (err) {
 			console.log(err);

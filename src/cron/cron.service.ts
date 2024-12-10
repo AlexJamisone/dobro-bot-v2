@@ -8,6 +8,7 @@ import { QuickrestoService } from 'src/quickresto/quickresto.service';
 import { Processed } from 'src/quickresto/quickresto.types';
 import { Context, Telegraf } from 'telegraf';
 import axios, { type AxiosInstance } from 'axios';
+import { ApiService } from 'src/api/api.service';
 
 @Injectable()
 export class CronService {
@@ -15,6 +16,7 @@ export class CronService {
 		private readonly quickresto: QuickrestoService,
 		private readonly prisma: PrismaService,
 		private readonly logger: LoggerService,
+		private readonly api: ApiService,
 		@InjectBot() private bot: Telegraf<Context>,
 	) {
 		this.backend = axios.create({
@@ -26,7 +28,7 @@ export class CronService {
 		});
 	}
 	private backend: AxiosInstance;
-	@Cron(CronExpression.EVERY_7_HOURS)
+	@Cron(CronExpression.EVERY_HOUR)
 	async handlUpdatePrice() {
 		this.logger.verbose('Start Cron task');
 		const coffees = await this.merge();
@@ -54,15 +56,10 @@ export class CronService {
 	}
 	private async merge() {
 		try {
-			const { nextUrl, id } = await this.prisma.metric.findFirst({
-				select: { nextUrl: true, id: true },
-			});
-			if (!nextUrl) {
-				throw new Error('Parse url emty');
-			}
+			const urls = await this.api.getCoffeeLink();
 			const coffees = this.backend.post<DataFromBackend>(
 				'/api/items',
-				{ url: nextUrl },
+				{ urls },
 				{
 					auth: {
 						username: process.env.AUTH_USERNAME,
@@ -76,10 +73,6 @@ export class CronService {
 			this.logger.verbose('Done ✅');
 			const result: (Processed & Coffee)[] = [];
 			const [w, q] = await Promise.all([coffees, qr]);
-			await this.prisma.metric.update({
-				where: { id },
-				data: { nextUrl: w.data.nextUrl },
-			});
 			for (const coffee of w.data.products) {
 				for (const quickresto of q) {
 					if (compareStrings(coffee.name, quickresto.name)) {
