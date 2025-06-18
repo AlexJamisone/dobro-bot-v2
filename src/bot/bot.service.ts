@@ -15,8 +15,8 @@ export class BotService {
 	async start(ctx: Context) {
 		const markup = Markup.inlineKeyboard(
 			[
-				{ url: 'https://dobro-coffee.shop/tips', text: 'Чаевые' },
-				{ url: 'https://dobro-coffee.shop/yandex', text: 'Отзывы' },
+				{ url: 'https://dobrocoffee.shop/tips', text: 'Чаевые' },
+				{ url: 'https://dobrocoffee.shop/review', text: 'Отзывы' },
 			],
 			{
 				columns: 2,
